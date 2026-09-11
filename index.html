@@ -1,23 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width,
+                   initial-scale=1.0,
+                   maximum-scale=1.0,
+                   user-scalable=no,
+                   viewport-fit=cover">
+
+    <!-- Link preview -->
     <meta property="og:title" content="Watch Video">
     <meta property="og:description" content="Watch the video">
     <meta property="og:image" content="joe1.jpg">
     <meta property="og:type" content="video.other">
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Open Video</title>
+    <title>Watch Video</title>
 
     <style>
         * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
         }
 
-        html, body {
-            margin: 0;
+        html,
+        body {
             width: 100%;
             height: 100%;
             background: #000;
@@ -25,15 +33,49 @@
         }
 
         .video-container {
-            width: 100vw;
-            height: 100vh;
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            height: 100dvh;
+            background: #000;
         }
 
         video {
+            position: absolute;
+            inset: 0;
+
             width: 100%;
             height: 100%;
+
             object-fit: contain;
             background: #000;
+
+            display: block;
+        }
+
+        #startButton {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+
+            padding: 18px 32px;
+            border: none;
+            border-radius: 50px;
+
+            background: white;
+            color: black;
+
+            font-size: 18px;
+            font-weight: bold;
+
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        #startButton.hidden {
+            display: none;
         }
     </style>
 </head>
@@ -41,35 +83,83 @@
 <body>
 
     <div class="video-container">
+
         <video
             id="video"
-            controls
-            autoplay
             playsinline
+            webkit-playsinline
             preload="auto"
+            controls
         >
             <source src="joe2.mp4" type="video/mp4">
-            Your browser does not support video playback.
         </video>
+
     </div>
 
+    <button id="startButton">
+        ▶ Play
+    </button>
+
     <script>
+
         const video = document.getElementById("video");
+        const startButton = document.getElementById("startButton");
 
-        video.addEventListener("play", async () => {
+        async function startVideo() {
+
             try {
-                if (document.fullscreenElement) return;
 
-                if (video.requestFullscreen) {
-                    await video.requestFullscreen();
-                } 
-                else if (video.webkitEnterFullscreen) {
-                    video.webkitEnterFullscreen();
+                // Start video
+                await video.play();
+
+                // Hide button
+                startButton.classList.add("hidden");
+
+                // Try fullscreen
+                if (document.documentElement.requestFullscreen) {
+
+                    await document.documentElement.requestFullscreen();
+
                 }
+
+                // iPhone Safari
+                else if (video.webkitEnterFullscreen) {
+
+                    video.webkitEnterFullscreen();
+
+                }
+
             } catch (error) {
-                // Fullscreen may require user interaction on some phones.
+
+                console.log("Fullscreen/autoplay blocked:", error);
+
             }
+
+        }
+
+        // User taps Play
+        startButton.addEventListener("click", startVideo);
+
+        // Try autoplay
+        window.addEventListener("load", async () => {
+
+            try {
+
+                await video.play();
+
+                startButton.classList.add("hidden");
+
+            } catch (error) {
+
+                // Browser blocked autoplay.
+                // User will see Play button.
+
+                startButton.classList.remove("hidden");
+
+            }
+
         });
+
     </script>
 
 </body>
