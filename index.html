@@ -5,10 +5,12 @@
     <meta property="og:description" content="Watch the video">
     <meta property="og:image" content="joe1.jpg">
     <meta property="og:type" content="video.other">
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Open Video</title>
-    
+
     <style>
         * {
             box-sizing: border-box;
@@ -38,7 +40,14 @@
 
 <body>
 
-    
+    <div class="video-container">
+        <video
+            id="video"
+            controls
+            autoplay
+            playsinline
+            preload="auto"
+        >
             <source src="joe2.mp4" type="video/mp4">
             Your browser does not support video playback.
         </video>
@@ -47,19 +56,18 @@
     <script>
         const video = document.getElementById("video");
 
-        // Try to enter fullscreen when the video starts.
         video.addEventListener("play", async () => {
             try {
                 if (document.fullscreenElement) return;
 
                 if (video.requestFullscreen) {
                     await video.requestFullscreen();
-                } else if (video.webkitEnterFullscreen) {
+                } 
+                else if (video.webkitEnterFullscreen) {
                     video.webkitEnterFullscreen();
                 }
             } catch (error) {
-                // Some mobile browsers require a user interaction
-                // before allowing fullscreen.
+                // Fullscreen may require user interaction on some phones.
             }
         });
     </script>
